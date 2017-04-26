@@ -218,7 +218,22 @@ trait SingleTableInheritanceTrait {
       $filteredAttributes = array_intersect_key($attributes, array_flip($persistedAttributes));
     }
 
+    // All pivot attributes start with 'pivot_'
+    // Add pivot attributes back in
+    $filteredAttributes += $this->getPivotAttributeNames($attributes);
+    
     $this->setRawAttributes($filteredAttributes, true);
+  }
+  
+  protected function getPivotAttributeNames($attributes)
+  {
+    $pivots = [];
+    foreach ($attributes as $key => $value) {
+      if (starts_with($key, 'pivot_')) {
+        array_set($pivots, $key, $value);
+      }
+    }
+    return $pivots;
   }
 
   protected function getThrowInvalidAttributeExceptions() {
